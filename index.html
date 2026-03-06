@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grok AutoTrade - Test</title>
+    <style>
+        body { font-family: sans-serif; background: #121214; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #1c1c1f; padding: 20px; border-radius: 15px; border: 1px solid #333; text-align: center; width: 300px; }
+        button { background: #007aff; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 15px; }
+        button:hover { background: #005bb5; }
+        #price { font-size: 24px; font-weight: bold; color: #00ffa3; margin: 15px 0; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>STON.fi Price</h2>
+    <p>Курс TON / USDT</p>
+    <div id="price">Нажми кнопку...</div>
+    <button onclick="getPrice()">Обновить цену</button>
+</div>
+
+<script>
+    async function getPrice() {
+        const display = document.getElementById('price');
+        display.innerText = 'Загрузка...';
+        
+        try {
+            // Используем официальное API STON.fi, чтобы получить данные
+            const response = await fetch('https://api.ston.fi/v1/assets');
+            const data = await response.json();
+            
+            // Ищем TON в списке (обычно это первый или популярный актив)
+            const ton = data.assets.find(a => a.symbol === 'TON');
+            
+            if (ton) {
+                // Если API отдало цену, выводим её
+                display.innerText = `$${parseFloat(ton.dex_usd_price).toFixed(2)}`;
+            } else {
+                display.innerText = 'Ошибка данных';
+            }
+        } catch (e) {
+            display.innerText = 'Ошибка сети';
+            console.error(e);
+        }
+    }
+</script>
+
+</body>
+</html>
